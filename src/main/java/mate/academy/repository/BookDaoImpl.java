@@ -8,8 +8,6 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-
-
 @Repository
 public class BookDaoImpl implements BookRepository {
     private final SessionFactory sessionFactory;
@@ -44,7 +42,8 @@ public class BookDaoImpl implements BookRepository {
     @Override
     public List<Book> findAll() {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("SELECT b FROM mate.academy.model.Book b", Book.class).getResultList();
+            return session.createQuery("SELECT b FROM mate.academy.model.Book b",
+                    Book.class).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can`t get list of books from DB", e);
         }

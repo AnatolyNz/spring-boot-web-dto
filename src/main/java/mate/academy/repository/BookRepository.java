@@ -1,9 +1,8 @@
 package mate.academy.repository;
 
-import mate.academy.model.Book;
 import java.util.List;
+import mate.academy.model.Book;
 import org.springframework.stereotype.Repository;
-
 
 @Repository
 public interface BookRepository {
