@@ -1,6 +1,7 @@
 package mate.academy.repository;
 
 import java.util.List;
+import java.util.Optional;
 import mate.academy.model.Book;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -22,7 +23,7 @@ public class BookDaoImpl implements BookRepository {
         Session session = null;
         Transaction transaction = null;
         try {
-            sessionFactory.openSession();
+            session = sessionFactory.openSession();
             transaction = session.beginTransaction();
             session.save(book);
             transaction.commit();
@@ -31,7 +32,7 @@ public class BookDaoImpl implements BookRepository {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new RuntimeException("Can`t save book to DB", e);
+            throw new RuntimeException("Can't insert book into DB: " + book, e);
         } finally {
             if (session != null) {
                 session.close();
@@ -40,13 +41,21 @@ public class BookDaoImpl implements BookRepository {
     }
 
     @Override
-    public List<Book> findAll() {
+    public List<Book> getAll() {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("SELECT b FROM mate.academy.model.Book b",
-                    Book.class).getResultList();
+            return session.createQuery("SELECT book FROM Book book", Book.class)
+                    .getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Can`t get list of books from DB", e);
+            throw new RuntimeException("Can't get all books from DB", e);
         }
+    }
 
+    @Override
+    public Optional<Book> getBookById(Long id) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("SELECT book FROM Book book WHERE book.id = :id", Book.class)
+                    .setParameter("id", id)
+                    .uniqueResultOptional();
+        }
     }
 }

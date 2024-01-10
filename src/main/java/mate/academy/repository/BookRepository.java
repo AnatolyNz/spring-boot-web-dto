@@ -1,6 +1,7 @@
 package mate.academy.repository;
 
 import java.util.List;
+import java.util.Optional;
 import mate.academy.model.Book;
 import org.springframework.stereotype.Repository;
 
@@ -8,5 +9,7 @@ import org.springframework.stereotype.Repository;
 public interface BookRepository {
     Book save(Book book);
 
-    List<Book> findAll();
+    Optional<Book> getBookById(Long id);
+
+    List<Book> getAll();
 }
