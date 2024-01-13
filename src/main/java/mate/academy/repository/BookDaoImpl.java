@@ -56,6 +56,8 @@ public class BookDaoImpl implements BookRepository {
             return session.createQuery("SELECT book FROM Book book WHERE book.id = :id", Book.class)
                     .setParameter("id", id)
                     .uniqueResultOptional();
+        }  catch (Exception e) {
+            throw new RuntimeException("Can't get book by id from DB: " + id, e);
         }
     }
 }
