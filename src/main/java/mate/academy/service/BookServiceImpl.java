@@ -31,8 +31,20 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> getAll() {
-        return bookRepository.getAll().stream()
+    public void deleteById(Long id) {
+        bookRepository.deleteById(id);
+    }
+
+    @Override
+    public void updateById(Long id, CreateBookRequestDto bookWithoutId) {
+        Book book = bookMapper.toModel(bookWithoutId);
+        book.setId(id);
+        bookRepository.save(book);
+    }
+
+    @Override
+    public List<BookDto> findAll() {
+        return bookRepository.findAll().stream()
                 .map(bookMapper::toDto)
                 .collect(Collectors.toList());
     }
