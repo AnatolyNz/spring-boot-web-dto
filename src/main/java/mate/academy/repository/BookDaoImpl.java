@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class BookDaoImpl implements BookRepository {
+public abstract class BookDaoImpl implements BookRepository {
     private final SessionFactory sessionFactory;
 
     @Autowired
@@ -41,7 +41,7 @@ public class BookDaoImpl implements BookRepository {
     }
 
     @Override
-    public List<Book> getAll() {
+    public List<Book> findAll() {
         try (Session session = sessionFactory.openSession()) {
             return session.createQuery("SELECT book FROM Book book", Book.class)
                     .getResultList();
