@@ -2,6 +2,7 @@ package mate.academy.service;
 
 import java.util.List;
 import mate.academy.dto.BookDto;
+import mate.academy.dto.BookSearchParameters;
 import mate.academy.dto.CreateBookRequestDto;
 import org.springframework.stereotype.Service;
 
@@ -16,4 +17,6 @@ public interface BookService {
     void updateById(Long id, CreateBookRequestDto bookWithoutId);
 
     List<BookDto> findAll();
+
+    public List<BookDto> search(BookSearchParameters params);
 }

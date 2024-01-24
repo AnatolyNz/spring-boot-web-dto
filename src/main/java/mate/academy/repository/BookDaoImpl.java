@@ -3,6 +3,7 @@ package mate.academy.repository;
 import java.util.List;
 import java.util.Optional;
 import mate.academy.model.Book;
+import mate.academy.repository.book.BookRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
