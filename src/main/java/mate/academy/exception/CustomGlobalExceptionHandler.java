@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
+    private static final String SPACE = " ";
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
@@ -39,7 +40,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         if (e instanceof FieldError) {
             String field = ((FieldError) e).getField();
             String message = e.getDefaultMessage();
-            return field + " " + message; //price should be greater or equals to 0
+            return field + SPACE + message;
         }
         return e.getDefaultMessage();
     }
