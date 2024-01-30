@@ -1,5 +1,6 @@
 package mate.academy.repository.book;
 
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import mate.academy.dto.BookSearchParameters;
 import mate.academy.model.Book;
@@ -16,7 +17,7 @@ public class BookSpecificationBuilder implements SpecificationBuilder<Book> {
     @Override
     public Specification<Book> build(BookSearchParameters searchParameters) {
         Specification<Book> spec = Specification.where(null);
-        if (searchParameters.titles() != null && searchParameters.titles().length > 0) {
+        if (Objects.nonNull(searchParameters.titles()) && searchParameters.titles().length > 0) {
             spec = spec.and(bookSpecificationProviderManager
                     .getSpecificationProvider("title")
                     .getSpecification(searchParameters.titles()));

@@ -2,6 +2,7 @@ package mate.academy.repository.book;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import mate.academy.exception.SpecificationProviderNotFoundException;
 import mate.academy.model.Book;
 import mate.academy.repository.SpecificationProvider;
 import mate.academy.repository.SpecificationProviderManager;
@@ -18,7 +19,8 @@ public class BookSpecificationProviderManager implements SpecificationProviderMa
                 .filter(p -> p.getKey().equals(key))
                 .findFirst()
                 .orElseThrow(()
-                        -> new RuntimeException("Can't find correct specification "
+                        -> new SpecificationProviderNotFoundException(
+                                "Can't find correct specification "
                         + "provider for key " + key));
     }
 }
