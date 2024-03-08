@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -18,7 +19,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
-    private static final String SPACE = " ";
+    private static final String SPACE = StringUtils.EMPTY;
+    private static final String ERRORS_PARAM = "errors";
+    private static final String MESSAGE_PARAM = "message";
+    private static final String STATUS_PARAM = "status";
+    private static final String TIMESTAMP_PARAM = "timestamp";
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
@@ -28,12 +33,12 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
             WebRequest request
     ) {
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.BAD_REQUEST);
+        body.put(TIMESTAMP_PARAM, LocalDateTime.now());
+        body.put(STATUS_PARAM, HttpStatus.BAD_REQUEST);
         List<String> errors = ex.getBindingResult().getAllErrors().stream()
                 .map(this::getErrorMessage)
                 .toList();
-        body.put("errors", errors);
+        body.put(ERRORS_PARAM, errors);
         return new ResponseEntity<>(body, headers, status);
     }
 
@@ -51,9 +56,9 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
             RegistrationException ex,
             WebRequest request) {
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.BAD_REQUEST);
-        body.put("message", ex.getMessage());
+        body.put(TIMESTAMP_PARAM, LocalDateTime.now());
+        body.put(STATUS_PARAM, HttpStatus.BAD_REQUEST);
+        body.put(MESSAGE_PARAM, ex.getMessage());
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 }

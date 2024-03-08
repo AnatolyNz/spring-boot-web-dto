@@ -2,6 +2,7 @@ package mate.academy.repository;
 
 import java.util.List;
 import java.util.Optional;
+import mate.academy.exception.EntityNotFoundException;
 import mate.academy.model.Book;
 import mate.academy.repository.book.BookRepository;
 import org.hibernate.Session;
@@ -58,7 +59,7 @@ public abstract class BookDaoImpl implements BookRepository {
                     .setParameter("id", id)
                     .uniqueResultOptional();
         } catch (Exception e) {
-            throw new RuntimeException("Can't get book by id from DB: " + id, e);
+            throw new EntityNotFoundException("Can't get book by id from DB: " + id);
         }
     }
 }

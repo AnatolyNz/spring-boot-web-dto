@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class BookSpecificationBuilder implements SpecificationBuilder<Book> {
+    private static final String AUTHOR_PARAM = "author";
+    private static final String PRICE_PARAM = "price";
+    private static final String TITLE_PARAM = "title";
     private final SpecificationProviderManager<Book> bookSpecificationProviderManager;
 
     @Override
@@ -19,17 +22,17 @@ public class BookSpecificationBuilder implements SpecificationBuilder<Book> {
         Specification<Book> spec = Specification.where(null);
         if (Objects.nonNull(searchParameters.titles()) && searchParameters.titles().length > 0) {
             spec = spec.and(bookSpecificationProviderManager
-                    .getSpecificationProvider("title")
+                    .getSpecificationProvider(TITLE_PARAM)
                     .getSpecification(searchParameters.titles()));
         }
         if (searchParameters.authors() != null && searchParameters.authors().length > 0) {
             spec = spec.and(bookSpecificationProviderManager
-                    .getSpecificationProvider("author")
+                    .getSpecificationProvider(AUTHOR_PARAM)
                     .getSpecification(searchParameters.authors()));
         }
         if (searchParameters.prices() != null && searchParameters.prices().length > 0) {
             spec = spec.and(bookSpecificationProviderManager
-                    .getSpecificationProvider("price")
+                    .getSpecificationProvider(PRICE_PARAM)
                     .getSpecification(searchParameters.prices()));
         }
         return spec;
