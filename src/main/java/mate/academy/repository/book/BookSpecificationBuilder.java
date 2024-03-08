@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class BookSpecificationBuilder implements SpecificationBuilder<Book> {
-    private static final String AUTHOR_PARAM = "author";
-    private static final String PRICE_PARAM = "price";
-    private static final String TITLE_PARAM = "title";
+    public static final String AUTHOR_OUT_PARAM = "author";
+    private static final String PRICE_OUT_PARAM = "price";
+    private static final String TITLE_OUT_PARAM = "title";
     private final SpecificationProviderManager<Book> bookSpecificationProviderManager;
 
     @Override
@@ -22,17 +22,17 @@ public class BookSpecificationBuilder implements SpecificationBuilder<Book> {
         Specification<Book> spec = Specification.where(null);
         if (Objects.nonNull(searchParameters.titles()) && searchParameters.titles().length > 0) {
             spec = spec.and(bookSpecificationProviderManager
-                    .getSpecificationProvider(TITLE_PARAM)
+                    .getSpecificationProvider(TITLE_OUT_PARAM)
                     .getSpecification(searchParameters.titles()));
         }
         if (searchParameters.authors() != null && searchParameters.authors().length > 0) {
             spec = spec.and(bookSpecificationProviderManager
-                    .getSpecificationProvider(AUTHOR_PARAM)
+                    .getSpecificationProvider(AUTHOR_OUT_PARAM)
                     .getSpecification(searchParameters.authors()));
         }
         if (searchParameters.prices() != null && searchParameters.prices().length > 0) {
             spec = spec.and(bookSpecificationProviderManager
-                    .getSpecificationProvider(PRICE_PARAM)
+                    .getSpecificationProvider(PRICE_OUT_PARAM)
                     .getSpecification(searchParameters.prices()));
         }
         return spec;
