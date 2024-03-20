@@ -29,7 +29,6 @@ public class UserServiceImpl implements UserService {
             throw new RegistrationException("User already exists");
         }
         User user = new User();
-        //user.setPassword(request.getPassword());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setEmail(request.getEmail());
         user.setFirstName(request.getFirstName());
