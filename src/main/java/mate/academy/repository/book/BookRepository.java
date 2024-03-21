@@ -5,12 +5,17 @@ import java.util.Optional;
 import mate.academy.model.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long>,
         JpaSpecificationExecutor<Book> {
+
     Book save(Book book);
+
+    @Query("SELECT b FROM Book b JOIN b.categories c WHERE c.id=:categoryId")
+    List<Book> findAllByCategoryId(Long categoryId);
 
     Optional<Book> getBookById(Long id);
 
