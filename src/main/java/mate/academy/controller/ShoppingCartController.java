@@ -30,40 +30,40 @@ public class ShoppingCartController {
     private final ShoppingCartService shoppingCartService;
     private final CartItemRepository cartItemRepository;
 
-    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PostMapping
     @Operation(summary = "Add new book to cart",
             description = "Before adding new book we check if this book is already in cart "
                     + "and than or change qty or add new cartItem")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
     public void addBook(Authentication authentication,
                         @RequestBody @Valid CartItemRequestDto cartItemRequestDto) {
-        shoppingCartService.addItemToCart(authentication, cartItemRequestDto);
+        shoppingCartService.addItemToCart(cartItemRequestDto);
     }
 
-    @GetMapping
     @PreAuthorize("hasAuthority('ROLE_USER')")
+    @GetMapping
     @Operation(summary = "Get all books from cart", description = "Get all books from cart")
     public ShoppingCartDto getAllCartItems(Authentication authentication) {
-        return shoppingCartService.getAllCartItems(authentication);
+        return shoppingCartService.getAllCartItems();
     }
 
-    @PutMapping("/cart-items/{id}")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PutMapping("/cart-items/{id}")
     @Operation(summary = "Update book qty in cart",
             description = "You just set new qty of book in your shopping cart")
-    public void updateCartItemByBookId(Authentication authentication, @PathVariable Long id,
+    public void updateCartItemByBookId(@PathVariable Long id,
                                        @RequestBody @Valid
                                        CartItemQuantityRequestDto qty) {
-        shoppingCartService.updateBookQuantity(authentication, id, qty);
+        shoppingCartService.updateBookQuantity(id, qty);
     }
 
-    @DeleteMapping("/cart-items/{id}")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @DeleteMapping("/cart-items/{id}")
     @Operation(summary = "Delete cart item", description = "Delete cart item")
-    public void removeCartItemByBookId(Authentication authentication, @PathVariable Long id) {
+    public void removeCartItemByBookId(@PathVariable Long id) {
         cartItemRepository.deleteById(id);
     }
 }

@@ -22,14 +22,14 @@ import org.hibernate.annotations.Where;
 @Where(clause = "is_deleted=FALSE")
 @SQLDelete(sql = "UPDATE cart_items SET is_deleted=TRUE WHERE id=?")
 @Accessors(chain = true)
+@ToString(exclude = {"shoppingCart"})
+@EqualsAndHashCode(exclude = {"shoppingCart"})
 public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
     @JoinColumn(name = "shopping_cart_id", nullable = false)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private ShoppingCart shoppingCart;
     @ManyToOne
     @JoinColumn(name = "book_id", nullable = false)
