@@ -16,7 +16,7 @@ import mate.academy.repository.CartItemRepository;
 import mate.academy.repository.ShoppingCartRepository;
 import mate.academy.repository.UserRepository;
 import mate.academy.repository.book.BookRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,29 +32,31 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     @Transactional
-    public void addItemToCart(CartItemRequestDto cartItemRequestDto) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public void addItemToCart(Authentication authentication,
+                              CartItemRequestDto cartItemRequestDto) {
+        User user = getUser(authentication);
         ShoppingCart shoppingCart = shoppingCartRepository.findShoppingCartByUserId(user.getId())
                 .orElseGet(() -> registerNewShoppingCart(user));
 
         Optional<CartItem> existingCartItem = shoppingCart.getCartItems().stream()
                 .filter(item -> item.getBook().getId().equals(cartItemRequestDto.getBookId()))
                 .findFirst();
-        final CartItem[] cartItemToUpdate = new CartItem[1];
         existingCartItem.ifPresentOrElse(
                 cartItem -> {
                     cartItem.setQuantity(cartItemRequestDto.getQuantity() + cartItem.getQuantity());
-                    cartItemToUpdate[0] = cartItem;
+                    cartItemRepository.save(cartItem);
                 },
-                () -> cartItemToUpdate[0] = createNewCartItem(cartItemRequestDto, shoppingCart)
+                () -> {
+                    CartItem newCartItem = createNewCartItem(cartItemRequestDto, shoppingCart);
+                    cartItemRepository.save(newCartItem);
+                }
         );
-        cartItemRepository.save(cartItemToUpdate[0]);
     }
 
     @Override
     @Transactional
-    public ShoppingCartDto getAllCartItems() {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public ShoppingCartDto getAllCartItems(Authentication authentication) {
+        User user = getUser(authentication);
         ShoppingCart shoppingCart = shoppingCartRepository.findShoppingCartByUserId(user.getId())
                 .orElseGet(() -> registerNewShoppingCart(user));
         return shoppingCartMapper.toDto(shoppingCart);
@@ -62,9 +64,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     @Transactional
-    public void updateBookQuantity(Long cartItemId,
+    public void updateBookQuantity(Authentication authentication, Long cartItemId,
                                    CartItemQuantityRequestDto qtyRequestDto) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = getUser(authentication);
         ShoppingCart shoppingCart = shoppingCartRepository.findShoppingCartByUserId(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Can't find shopping cart by "
                         + "user id " + user.getId()));
@@ -83,9 +85,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return shoppingCartRepository.save(shoppingCart);
     }
 
-    private User getUser() {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String email = user.getEmail();
+    private User getUser(Authentication authentication) {
+        String email = authentication.getName();
         return userRepository.findByEmail(email).orElseThrow(
                 () -> new EntityNotFoundException("Can not find user by email" + email));
     }

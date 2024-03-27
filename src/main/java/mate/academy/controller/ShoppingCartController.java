@@ -38,14 +38,14 @@ public class ShoppingCartController {
                     + "and than or change qty or add new cartItem")
     public void addBook(Authentication authentication,
                         @RequestBody @Valid CartItemRequestDto cartItemRequestDto) {
-        shoppingCartService.addItemToCart(cartItemRequestDto);
+        shoppingCartService.addItemToCart(authentication, cartItemRequestDto);
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping
     @Operation(summary = "Get all books from cart", description = "Get all books from cart")
     public ShoppingCartDto getAllCartItems(Authentication authentication) {
-        return shoppingCartService.getAllCartItems();
+        return shoppingCartService.getAllCartItems(authentication);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -53,10 +53,10 @@ public class ShoppingCartController {
     @PutMapping("/cart-items/{id}")
     @Operation(summary = "Update book qty in cart",
             description = "You just set new qty of book in your shopping cart")
-    public void updateCartItemByBookId(@PathVariable Long id,
+    public void updateCartItemByBookId(Authentication authentication, @PathVariable Long id,
                                        @RequestBody @Valid
                                        CartItemQuantityRequestDto qty) {
-        shoppingCartService.updateBookQuantity(id, qty);
+        shoppingCartService.updateBookQuantity(authentication, id, qty);
     }
 
     @ResponseStatus(HttpStatus.OK)
