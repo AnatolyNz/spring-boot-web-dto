@@ -32,9 +32,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     @Transactional
-    public void addItemToCart(Authentication authentication,
+    public void addItemToCart(User user,
                               CartItemRequestDto cartItemRequestDto) {
-        User user = getUser(authentication);
         ShoppingCart shoppingCart = shoppingCartRepository.findShoppingCartByUserId(user.getId())
                 .orElseGet(() -> registerNewShoppingCart(user));
 
@@ -92,7 +91,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Transactional
-    private CartItem createNewCartItem(CartItemRequestDto cartItemRequestDto,
+    public CartItem createNewCartItem(CartItemRequestDto cartItemRequestDto,
                                        ShoppingCart shoppingCart) {
         Book bookFromDb = bookRepository
                 .findById(cartItemRequestDto.getBookId())

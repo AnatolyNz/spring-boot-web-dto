@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import mate.academy.dto.CartItemQuantityRequestDto;
 import mate.academy.dto.CartItemRequestDto;
 import mate.academy.dto.ShoppingCartDto;
+import mate.academy.model.User;
 import mate.academy.repository.CartItemRepository;
 import mate.academy.service.ShoppingCartService;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,7 @@ public class ShoppingCartController {
                     + "and than or change qty or add new cartItem")
     public void addBook(Authentication authentication,
                         @RequestBody @Valid CartItemRequestDto cartItemRequestDto) {
-        shoppingCartService.addItemToCart(authentication, cartItemRequestDto);
+        shoppingCartService.addItemToCart((User) authentication.getPrincipal(), cartItemRequestDto);
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
