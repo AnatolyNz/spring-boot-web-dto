@@ -34,11 +34,20 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemMapper orderItemMapper;
 
     @Override
-    public void placeOrder(User user, ShippingAddressRequestDto shippingAddress) {
-        Order order = createOrder(user, shippingAddress);
+    public Order placeOrder(User user, ShippingAddressRequestDto shippingAddress) {
         ShoppingCart shoppingCart = shoppingCartRepository.findShoppingCartByUserId(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Can't find shopping cart "
                         + "by user id " + user.getId()));
+        double total = shoppingCart.getCartItems().stream()
+                .mapToDouble(cartItem -> (double) cartItem.getQuantity()
+                        * cartItem.getBook().getPrice().doubleValue())
+                .sum();
+        Order order = new Order();
+        order.setUser(user);
+        order.setShippingAddress(shippingAddress.getShippingAddress());
+        order.setOrderDate(LocalDateTime.now());
+        order.setStatus(Order.Status.NEW);
+        order.setTotal(BigDecimal.valueOf(total));
         Set<OrderItem> orderItems = shoppingCart.getCartItems().stream()
                 .map(cartItem -> {
                     OrderItem orderItem = new OrderItem();
@@ -50,6 +59,7 @@ public class OrderServiceImpl implements OrderService {
                 })
                 .collect(Collectors.toSet());
         shoppingCartRepository.delete(shoppingCart);
+        return orderRepository.save(order);
     }
 
     @Override
@@ -82,31 +92,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderItemResponseDto getSpecificOrderItem(User user, Long orderId, Long itemId) {
-        List<OrderItemResponseDto> allOrderItems = getAllOrderItems(user,
-                orderId, Pageable.unpaged());
-        return allOrderItems.stream()
-                .filter(item -> item.getId().equals(itemId))
-                .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("Can't find order item by id "
-                        + itemId));
-    }
-
-    private Order createOrder(User user,
-                              ShippingAddressRequestDto shippingAddress) {
-        ShoppingCart shoppingCart = shoppingCartRepository.findShoppingCartByUserId(user.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Can't find shopping cart "
-                        + "by user id " + user.getId()));
-        double total = shoppingCart.getCartItems().stream()
-                .mapToDouble(cartItem -> (double) cartItem.getQuantity()
-                        * cartItem.getBook().getPrice().doubleValue())
-                .sum();
-        Order order = new Order();
-        order.setUser(user);
-        order.setShippingAddress(shippingAddress.getShippingAddress());
-        order.setOrderDate(LocalDateTime.now());
-        order.setStatus(Order.Status.NEW);
-        order.setTotal(BigDecimal.valueOf(total));
-        return orderRepository.save(order);
+    public OrderItemResponseDto getSpecificOrderItem(Long orderId) {
+        OrderItem orderItem = orderItemRepository.findByOrderId(orderId)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Can't find order item by order id."));
+        return orderItemMapper.toResponseDto(orderItem);
     }
 }

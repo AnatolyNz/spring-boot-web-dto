@@ -5,12 +5,13 @@ import mate.academy.dto.OrderItemResponseDto;
 import mate.academy.dto.OrderResponseDto;
 import mate.academy.dto.OrderStatusDto;
 import mate.academy.dto.ShippingAddressRequestDto;
+import mate.academy.model.Order;
 import mate.academy.model.User;
 import org.springframework.data.domain.Pageable;
 
 public interface OrderService {
-    void placeOrder(User user,
-                    ShippingAddressRequestDto shippingAddress);
+    Order placeOrder(User user,
+                     ShippingAddressRequestDto shippingAddress);
 
     List<OrderResponseDto> getAllOrders(User user, Pageable pageable);
 
@@ -20,6 +21,5 @@ public interface OrderService {
     List<OrderItemResponseDto> getAllOrderItems(User user,
                                                 Long orderId, Pageable pageable);
 
-    OrderItemResponseDto getSpecificOrderItem(User user, Long orderId,
-                                              Long itemId);
+    OrderItemResponseDto getSpecificOrderItem(Long orderId);
 }
