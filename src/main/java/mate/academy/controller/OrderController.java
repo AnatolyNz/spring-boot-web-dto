@@ -54,7 +54,7 @@ public class OrderController {
             description = "Update order status by Admin")
     OrderResponseDto updateOrderStatus(Authentication authentication, @PathVariable Long id,
                                        @RequestBody OrderStatusDto statusDto) {
-        return orderService.updateOrderStatus((User) authentication.getPrincipal(), id,statusDto);
+        return orderService.updateOrderStatus(id,statusDto);
     }
 
     @GetMapping("/{orderId}/items")
