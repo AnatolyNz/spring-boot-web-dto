@@ -88,7 +88,8 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findByUserIdAndId(user.getId(), orderId)
                 .orElseThrow(() -> new EntityNotFoundException("Can't find order by order id "
                         + orderId + " and user id " + user.getId()));
-        return (List<OrderItemResponseDto>) orderItemMapper.toResponseDto((OrderItem) order.getOrderItems());
+        return (List<OrderItemResponseDto>) orderItemMapper
+                .toResponseDto((OrderItem) order.getOrderItems());
     }
 
     @Override
