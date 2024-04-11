@@ -23,6 +23,7 @@ import mate.academy.repository.ShoppingCartRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +35,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemMapper orderItemMapper;
 
     @Override
+    @Transactional
     public Order placeOrder(User user, ShippingAddressRequestDto shippingAddress) {
         ShoppingCart shoppingCart = shoppingCartRepository.findShoppingCartByUserId(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Can't find shopping cart "
@@ -72,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponseDto updateOrderStatus(User user, Long orderId,
+    public OrderResponseDto updateOrderStatus(Long orderId,
                                               OrderStatusDto statusDto) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new EntityNotFoundException("Can't find order by id "
@@ -86,9 +88,8 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findByUserIdAndId(user.getId(), orderId)
                 .orElseThrow(() -> new EntityNotFoundException("Can't find order by order id "
                         + orderId + " and user id " + user.getId()));
-        return order.getOrderItems().stream()
-                .map(orderItemMapper::toResponseDto)
-                .toList();
+        return (List<OrderItemResponseDto>) orderItemMapper
+                .toResponseDto((OrderItem) order.getOrderItems());
     }
 
     @Override
