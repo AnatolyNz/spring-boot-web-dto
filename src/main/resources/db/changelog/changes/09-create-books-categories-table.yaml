@@ -1,19 +1,19 @@
 databaseChangeLog:
   - changeSet:
-      id: create-users-roles-table
+      id: create-books-categories-table
       author: AnatoliiNazarov
       changes:
         - createTable:
-            tableName: users_roles
+            tableName: books_categories
             columns:
               - column:
-                  name: user_id
+                  name: book_id
                   type: bigint
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: role_id
+                  name: category_id
                   type: bigint
                   constraints:
                     primaryKey: true

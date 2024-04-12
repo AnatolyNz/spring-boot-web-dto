@@ -4,9 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BookStoreApplicationJwt {
-
+public class BookStoreApplicationPractice {
     public static void main(String[] args) {
-        SpringApplication.run(BookStoreApplicationJwt.class, args);
+        SpringApplication.run(BookStoreApplicationPractice.class, args);
     }
 }
