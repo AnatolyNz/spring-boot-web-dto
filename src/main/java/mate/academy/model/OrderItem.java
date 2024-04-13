@@ -23,13 +23,13 @@ import org.hibernate.annotations.Where;
 @SQLDelete(sql = "UPDATE order_items SET is_Deleted=true WHERE id=?")
 @Where(clause = "is_deleted=false")
 @Accessors(chain = true)
+@ToString(exclude = {"order"})
+@EqualsAndHashCode(exclude = {"order"})
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
     @ManyToOne
