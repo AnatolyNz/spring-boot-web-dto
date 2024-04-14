@@ -44,12 +44,10 @@ public class OrderServiceImpl implements OrderService {
                 .mapToDouble(cartItem -> (double) cartItem.getQuantity()
                         * cartItem.getBook().getPrice().doubleValue())
                 .sum();
-        OrderRequestDto orderRequestDto = orderMapper.toDto(shoppingCart);
-        Order order = orderMapper.toModel(orderRequestDto);
+        Order order = new Order(shoppingCart);
         Set<OrderItem> orderItems = shoppingCart.getCartItems().stream()
                 .map(cartItem -> {
-                    OrderItemDto orderItemDto = orderItemMapper.toDto(cartItem);
-                    OrderItem orderItem = orderItemMapper.toEntity(orderItemDto);
+                    OrderItem orderItem = new OrderItem(cartItem);
                     return orderItemRepository.save(orderItem);
                 })
                 .collect(Collectors.toSet());
@@ -61,9 +59,6 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderResponseDto> getAllOrders(User user,
                                                Pageable pageable) {
         Page<Order> allOrders = orderRepository.findAllByUserId(user.getId(), pageable);
-        //return allOrders.stream()
-        //.map(orderMapper::toResponseDto)
-        // .toList();
         return orderMapper.toResponseDtoList(allOrders);
     }
 
