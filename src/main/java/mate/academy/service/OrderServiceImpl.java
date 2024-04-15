@@ -1,7 +1,5 @@
 package mate.academy.service;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,19 +42,10 @@ public class OrderServiceImpl implements OrderService {
                 .mapToDouble(cartItem -> (double) cartItem.getQuantity()
                         * cartItem.getBook().getPrice().doubleValue())
                 .sum();
-        Order order = new Order();
-        order.setUser(user);
-        order.setShippingAddress(shippingAddress.getShippingAddress());
-        order.setOrderDate(LocalDateTime.now());
-        order.setStatus(Order.Status.NEW);
-        order.setTotal(BigDecimal.valueOf(total));
+        Order order = new Order(shoppingCart);
         Set<OrderItem> orderItems = shoppingCart.getCartItems().stream()
                 .map(cartItem -> {
-                    OrderItem orderItem = new OrderItem();
-                    orderItem.setBook(cartItem.getBook());
-                    orderItem.setQuantity(cartItem.getQuantity());
-                    orderItem.setPrice(cartItem.getBook().getPrice());
-                    orderItem.setOrder(order);
+                    OrderItem orderItem = new OrderItem(cartItem);
                     return orderItemRepository.save(orderItem);
                 })
                 .collect(Collectors.toSet());
@@ -68,9 +57,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderResponseDto> getAllOrders(User user,
                                                Pageable pageable) {
         Page<Order> allOrders = orderRepository.findAllByUserId(user.getId(), pageable);
-        return allOrders.stream()
-                .map(orderMapper::toResponseDto)
-                .toList();
+        return orderMapper.toResponseDtoList(allOrders);
     }
 
     @Override

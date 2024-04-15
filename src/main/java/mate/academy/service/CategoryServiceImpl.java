@@ -1,7 +1,6 @@
 package mate.academy.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import mate.academy.dto.CategoryDto;
 import mate.academy.dto.CategoryResponseDto;
@@ -11,6 +10,7 @@ import mate.academy.model.Category;
 import mate.academy.repository.CategoryRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -20,9 +20,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryResponseDto> findAll(Pageable pageable) {
-        return categoryRepository.findAll(pageable).stream()
-                .map(categoryMapper::toDto)
-                .collect(Collectors.toList());
+        return (List<CategoryResponseDto>) categoryMapper
+                .toDto((Category) categoryRepository.findAll(pageable));
     }
 
     @Override
@@ -40,6 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryResponseDto update(Long id, CategoryDto categoryDto) {
         Category existingCategory = categoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Can't find category by id "

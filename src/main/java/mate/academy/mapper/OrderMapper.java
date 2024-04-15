@@ -1,5 +1,6 @@
 package mate.academy.mapper;
 
+import java.util.List;
 import mate.academy.config.MapperConfig;
 import mate.academy.dto.OrderRequestDto;
 import mate.academy.dto.OrderResponseDto;
@@ -7,6 +8,7 @@ import mate.academy.model.Order;
 import mate.academy.model.ShoppingCart;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.data.domain.Page;
 
 @Mapper(config = MapperConfig.class, uses = OrderItemMapper.class)
 public interface OrderMapper {
@@ -20,8 +22,6 @@ public interface OrderMapper {
     Order toModel(OrderRequestDto orderRequestDto);
 
     @Mapping(target = "userId", source = "user.id")
-    @Mapping(target = "orderItems", source = "orderItems")
-    @Mapping(target = "total", source = "total")
     @Mapping(target = "orderStatus", source = "status")
-    OrderResponseDto toResponseDto(Order order);
+    List<OrderResponseDto> toResponseDtoList(Page<Order> allOrders);
 }
