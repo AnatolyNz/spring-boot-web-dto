@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: change-roles-table-type-role-name
+      author: AnatoliiNazarov
+      changes:
+        - modifyDataType:
+            tableName: roles
+            columnName: role_name
+            newDataType: enum('admin','user')

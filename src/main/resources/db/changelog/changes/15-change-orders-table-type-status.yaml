@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: change-orders-table-type-status
+      author: AnatoliiNazarov
+      changes:
+        - modifyDataType:
+            tableName: orders
+            columnName: status
+            newDataType: enum('new', 'in_process', 'proceed', 'shipped', 'delivered', 'canceled', 'returned')
+            
