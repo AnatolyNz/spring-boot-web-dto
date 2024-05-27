@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import mate.academy.dto.BookDto;
@@ -130,11 +131,11 @@ public class BookControllerTest {
         //Given
         List<BookDto> expected = new ArrayList<>();
         expected.add(new BookDto().setId(1L).setTitle("Book 1").setAuthor("Author 1")
-                .setIsbn("ISBN-123456").setPrice(BigDecimal.valueOf(100)));
+                .setIsbn("ISBN-123456").setPrice(BigDecimal.valueOf(100)).setCategoryIds(Set.of()));
         expected.add(new BookDto().setId(2L).setTitle("Book 2").setAuthor("Author 2")
-                .setIsbn("ISBN-654321").setPrice(BigDecimal.valueOf(200)));
+                .setIsbn("ISBN-654321").setPrice(BigDecimal.valueOf(200)).setCategoryIds(Set.of()));
         expected.add(new BookDto().setId(3L).setTitle("Book 3").setAuthor("Author 3")
-                .setIsbn("ISBN-908765").setPrice(BigDecimal.valueOf(250)));
+                .setIsbn("ISBN-908765").setPrice(BigDecimal.valueOf(250)).setCategoryIds(Set.of()));
 
         //When
         MvcResult result = mockMvc.perform(
@@ -161,7 +162,7 @@ public class BookControllerTest {
                 .setTitle("Book 1")
                 .setAuthor("Author 1")
                 .setIsbn("ISBN-123456")
-                .setPrice(BigDecimal.valueOf(100));
+                .setPrice(BigDecimal.valueOf(100)).setCategoryIds(Set.of());
 
         //When
         MvcResult result = mockMvc.perform(
@@ -194,7 +195,8 @@ public class BookControllerTest {
                 .setIsbn(updateBookRequestDto.getIsbn())
                 .setPrice(updateBookRequestDto.getPrice())
                 .setDescription(updateBookRequestDto.getDescription())
-                .setId(VALID_ID);
+                .setId(VALID_ID)
+                .setCategoryIds(Set.of());
 
         String jsonRequest = objectMapper.writeValueAsString(updateBookRequestDto);
         MvcResult result = mockMvc.perform(

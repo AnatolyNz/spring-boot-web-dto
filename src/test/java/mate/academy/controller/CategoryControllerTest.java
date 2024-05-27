@@ -21,6 +21,7 @@ import lombok.SneakyThrows;
 import mate.academy.dto.BookDtoWithoutCategoryIds;
 import mate.academy.dto.CategoryDto;
 import mate.academy.dto.CategoryResponseDto;
+import mate.academy.service.CategoryService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -49,6 +50,8 @@ public class CategoryControllerTest {
 
     @Autowired
     private static MockMvc mockMvc;
+    @Autowired
+    private CategoryService categoryService;
     @Autowired
     private ObjectMapper objectMapper;
 
