@@ -30,6 +30,18 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final CartItemMapper cartItemMapper;
     private final ShoppingCartMapper shoppingCartMapper;
 
+    private ShoppingCart registerNewShoppingCart(User user) {
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setUser(user);
+        return shoppingCartRepository.save(shoppingCart);
+    }
+
+    private User getUser(Authentication authentication) {
+        String email = authentication.getName();
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new EntityNotFoundException("Can not find user by email" + email));
+    }
+
     @Override
     @Transactional
     public void addItemToCart(User user,
@@ -76,18 +88,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                         + "by cart item id " + cartItemId));
         cartItem.setQuantity(qtyRequestDto.getQuantity());
         cartItemRepository.save(cartItem);
-    }
-
-    private ShoppingCart registerNewShoppingCart(User user) {
-        ShoppingCart shoppingCart = new ShoppingCart();
-        shoppingCart.setUser(user);
-        return shoppingCartRepository.save(shoppingCart);
-    }
-
-    private User getUser(Authentication authentication) {
-        String email = authentication.getName();
-        return userRepository.findByEmail(email).orElseThrow(
-                () -> new EntityNotFoundException("Can not find user by email" + email));
     }
 
     @Transactional

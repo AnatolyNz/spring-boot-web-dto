@@ -49,6 +49,9 @@ public class Order {
     @Column(nullable = false)
     private boolean isDeleted = false;
 
+    public Order(ShoppingCart shoppingCart) {
+    }
+
     public enum Status {
         NEW,
         IN_PROCESS,
