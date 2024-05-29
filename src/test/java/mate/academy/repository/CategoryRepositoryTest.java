@@ -26,9 +26,7 @@ public class CategoryRepositoryTest {
     private CategoryRepository categoryRepository;
 
     @Test
-    @DisplayName("""
-       Get category by valid ID
-            """)
+    @DisplayName("Get category by valid ID")
     @Sql(scripts = {
             "classpath:database/books/add-category-to-categories-table.sql",
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -53,9 +51,7 @@ public class CategoryRepositoryTest {
     }
 
     @Test
-    @DisplayName("""
-       Find all categories with pagination
-            """)
+    @DisplayName("Find all categories with pagination")
     @Sql(scripts = {
             "classpath:database/books/add-category-to-categories-table.sql",
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)

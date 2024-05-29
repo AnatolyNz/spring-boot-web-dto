@@ -40,7 +40,7 @@ public class CategoryServiceTest {
     @DisplayName("""
        Verify search() for all books
             """)
-    public void testFindAll_ValidSearchParameters_ShouldReturnListOfCategories() {
+    public void findAll_ValidSearchParameters_ShouldReturnListOfCategories() {
         Category category1 = new Category();
         category1.setId(1L);
         category1.setName("Mystery");
@@ -169,7 +169,7 @@ public class CategoryServiceTest {
     @DisplayName("""
        Verify update() updated categories with valid ID
             """)
-    public void testUpdateById_WithNotValidCategoryId_ShouldThrowException() {
+    public void updateById_WithNotValidCategoryId_ShouldThrowException() {
         // Mock data
         Long categoryId = 1L;
         CategoryDto updatedCategoryDto = new CategoryDto();

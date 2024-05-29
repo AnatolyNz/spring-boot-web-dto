@@ -39,7 +39,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc // Automatically configure MockMvc
+@AutoConfigureMockMvc
 public class BookControllerTest {
     private static final Long VALID_ID = 1L;
     @Autowired

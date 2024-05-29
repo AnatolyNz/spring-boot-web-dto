@@ -1,57 +1,72 @@
 package mate.academy.repository;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import javax.sql.DataSource;
 import mate.academy.model.Book;
 import mate.academy.repository.book.BookRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@SpringBootTest
 public class BookRepositoryTest {
     @Autowired
     private BookRepository bookRepository;
+    @Autowired
+    private DataSource dataSource;
+
+    @BeforeEach
+    void beforeEach() {
+        executeScripts(
+                "database/books/add-books-to-books-table.sql",
+                "database/books/add-category-to-categories-table.sql",
+                "database/books/add-category-to-book.sql"
+        );
+    }
+
+    @AfterEach
+    void afterEach() {
+        executeScripts(
+                "database/books/remove-from-book_category.sql",
+                "database/books/remove-from-books.sql",
+                "database/books/remove-from-categories.sql"
+        );
+    }
+
+    private void executeScripts(String... scriptPaths) {
+        try (Connection connection = dataSource.getConnection()) {
+            for (String scriptPath : scriptPaths) {
+                ScriptUtils.executeSqlScript(
+                        connection,
+                        new ClassPathResource(scriptPath)
+                );
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
 
     @Test
     @DisplayName("""
        Find all by valid category ID
             """)
-    @Sql(scripts = {
-            "classpath:database/books/add-books-to-books-table.sql",
-            "classpath:database/books/add-category-to-categories-table.sql",
-            "classpath:database/books/add-category-to-book.sql"
-    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = {
-            "classpath:database/books/remove-from-book_category.sql",
-            "classpath:database/books/remove-from-books.sql",
-            "classpath:database/books/remove-from-categories.sql"
-    }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void findAllByCategoryId_WithValidCategoryId_ShouldReturnBookList() {
         List<Book> actual = bookRepository.findAllByCategoryId(1L);
         Assertions.assertEquals(3, actual.size());
     }
 
     @Test
-    @DisplayName("""
-       Save book
-            """)
-    @Sql(scripts = {
-            "classpath:database/books/add-books-to-books-table.sql",
-            "classpath:database/books/add-category-to-categories-table.sql",
-            "classpath:database/books/add-category-to-book.sql"
-    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = {
-            "classpath:database/books/remove-from-book_category.sql",
-            "classpath:database/books/remove-from-books.sql",
-            "classpath:database/books/remove-from-categories.sql"
-    }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @DisplayName("Save book")
     void saveBook_WithValidBook_ShouldReturnBook() {
         Book book = new Book();
         book.setTitle("Book 4");
@@ -71,16 +86,6 @@ public class BookRepositoryTest {
     @DisplayName("""
        Get book by valid ID
             """)
-    @Sql(scripts = {
-            "classpath:database/books/add-books-to-books-table.sql",
-            "classpath:database/books/add-category-to-categories-table.sql",
-            "classpath:database/books/add-category-to-book.sql"
-    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = {
-            "classpath:database/books/remove-from-book_category.sql",
-            "classpath:database/books/remove-from-books.sql",
-            "classpath:database/books/remove-from-categories.sql"
-    }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void getBookById_WithValidId_ShouldReturnOptionalBook() {
         Book expected = new Book();
         expected.setTitle("Book 1");
@@ -109,16 +114,6 @@ public class BookRepositoryTest {
     @DisplayName("""
        Find all
             """)
-    @Sql(scripts = {
-            "classpath:database/books/add-books-to-books-table.sql",
-            "classpath:database/books/add-category-to-categories-table.sql",
-            "classpath:database/books/add-category-to-book.sql"
-    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = {
-            "classpath:database/books/remove-from-book_category.sql",
-            "classpath:database/books/remove-from-books.sql",
-            "classpath:database/books/remove-from-categories.sql"
-    }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void findAll_WithValidBook_ShouldReturnBookList() {
         List<Book> actual = bookRepository.findAll();
         Assertions.assertEquals(3, actual.size());
