@@ -1,5 +1,8 @@
 package mate.academy.repository;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -9,7 +12,6 @@ import javax.sql.DataSource;
 import mate.academy.model.Book;
 import mate.academy.repository.book.BookRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -62,7 +64,7 @@ public class BookRepositoryTest {
             """)
     void findAllByCategoryId_WithValidCategoryId_ShouldReturnBookList() {
         List<Book> actual = bookRepository.findAllByCategoryId(1L);
-        Assertions.assertEquals(3, actual.size());
+        assertEquals(3, actual.size());
     }
 
     @Test
@@ -79,7 +81,7 @@ public class BookRepositoryTest {
         book.setDeleted(false);
         Book actual = bookRepository.save(book);
         Book expected = book;
-        Assertions.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -98,16 +100,16 @@ public class BookRepositoryTest {
         expected.setDeleted(false);
         Optional<Book> actualOptional = bookRepository.getBookById(1L);
 
-        Assertions.assertTrue(actualOptional.isPresent(), "Book with id 1 should be present");
+        assertTrue(actualOptional.isPresent(), "Book with id 1 should be present");
         Book actual = actualOptional.get();
-        Assertions.assertEquals(expected.getId(), actual.getId());
-        Assertions.assertEquals(expected.getTitle(), actual.getTitle());
-        Assertions.assertEquals(expected.getPrice(), actual.getPrice());
-        Assertions.assertEquals(expected.getAuthor(), actual.getAuthor());
-        Assertions.assertEquals(expected.getIsbn(), actual.getIsbn());
-        Assertions.assertEquals(expected.getDescription(), actual.getDescription());
-        Assertions.assertEquals(expected.getCoverImage(), actual.getCoverImage());
-        Assertions.assertEquals(expected.isDeleted(), actual.isDeleted());
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getTitle(), actual.getTitle());
+        assertEquals(expected.getPrice(), actual.getPrice());
+        assertEquals(expected.getAuthor(), actual.getAuthor());
+        assertEquals(expected.getIsbn(), actual.getIsbn());
+        assertEquals(expected.getDescription(), actual.getDescription());
+        assertEquals(expected.getCoverImage(), actual.getCoverImage());
+        assertEquals(expected.isDeleted(), actual.isDeleted());
     }
 
     @Test
@@ -116,6 +118,6 @@ public class BookRepositoryTest {
             """)
     void findAll_WithValidBook_ShouldReturnBookList() {
         List<Book> actual = bookRepository.findAll();
-        Assertions.assertEquals(3, actual.size());
+        assertEquals(3, actual.size());
     }
 }

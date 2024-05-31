@@ -30,4 +30,6 @@ public interface BookMapper {
                 .collect(Collectors.toSet());
         bookDto.setCategoryIds(categoryIds);
     }
+
+    void updateBookFromDto(CreateBookRequestDto book, @MappingTarget Book entity);
 }

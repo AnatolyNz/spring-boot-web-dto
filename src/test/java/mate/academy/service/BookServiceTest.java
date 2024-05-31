@@ -53,9 +53,7 @@ public class BookServiceTest {
     }
 
     @Test
-    @DisplayName("""
-       Verify save and return for the correct book     
-            """)
+    @DisplayName("Verify save and return for the correct book")
     void saveBook_WithValidBookId_ShouldReturnValidBook() {
         // Mock data
         CreateBookRequestDto bookRequestDto = new CreateBookRequestDto();
@@ -78,9 +76,7 @@ public class BookServiceTest {
     }
 
     @Test
-    @DisplayName("""
-       Verify the correct book was returned when book exists     
-            """)
+    @DisplayName("Verify the correct book was returned when book exists")
     public void getBookById_WithValidBookId_ShouldReturnValidBook() {
         Long id = 1L;
         Book book = new Book();
@@ -97,9 +93,7 @@ public class BookServiceTest {
     }
 
     @Test
-    @DisplayName("""
-       Verify the correct book was not found     
-            """)
+    @DisplayName("Verify the correct book was not found")
     public void getBookById_WithNonExistingBookId_ShouldThrowException() {
         Long id = 100L;
         when(bookRepository.getBookById(id)).thenReturn(Optional.empty());
@@ -114,10 +108,8 @@ public class BookServiceTest {
     }
 
     @Test
-    @DisplayName("""
-       Verify search() for all books
-            """)
-    public void testFindAll_ValidSearchParameters_ShouldReturnListOfBooks() {
+    @DisplayName("Verify search() for all books")
+    public void findAll_ValidSearchParameters_ShouldReturnListOfBooks() {
         Book book1 = new Book();
         book1.setId(1L);
         book1.setTitle("Book 1");
@@ -152,20 +144,18 @@ public class BookServiceTest {
     }
 
     @Test
-    @DisplayName("""
-       Verify update() updated books with valid ID
-            """)
-    public void testUpdateById_WithValidBookId_ShouldUpdateBook() {
+    @DisplayName("Verify update() updated books with valid ID")
+    public void updateById_WithValidBookId_ShouldUpdateBook() {
         Long id = 1L;
         CreateBookRequestDto bookRequestDto = new CreateBookRequestDto();
         Book book = new Book();
         book.setId(id);
 
-        when(bookMapper.toModel(bookRequestDto)).thenReturn(book);
+        when(bookRepository.findById(id)).thenReturn(Optional.of(book));
 
         bookService.updateById(id, bookRequestDto);
 
-        verify(bookMapper, times(1)).toModel(bookRequestDto);
+        verify(bookRepository, times(1)).findById(id);
     }
 
     @Test
