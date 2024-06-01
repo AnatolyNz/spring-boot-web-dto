@@ -1,6 +1,8 @@
 package mate.academy.service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import mate.academy.dto.BookDto;
@@ -10,6 +12,8 @@ import mate.academy.dto.CreateBookRequestDto;
 import mate.academy.exception.EntityNotFoundException;
 import mate.academy.mapper.BookMapper;
 import mate.academy.model.Book;
+import mate.academy.model.Category;
+import mate.academy.repository.CategoryRepository;
 import mate.academy.repository.book.BookRepository;
 import mate.academy.repository.book.BookSpecificationBuilder;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +26,7 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
     private final BookSpecificationBuilder bookSpecificationBuilder;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public BookDto save(CreateBookRequestDto bookRequestDto) {
@@ -42,10 +47,21 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void updateById(Long id, CreateBookRequestDto bookWithoutId) {
-        Book book = bookMapper.toModel(bookWithoutId);
-        book.setId(id);
-        bookRepository.save(book);
+    public BookDto updateById(Long id, CreateBookRequestDto bookWithoutId) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Can't find book with id " + id));
+        bookMapper.updateBookFromDto(bookWithoutId, book);
+        Set<Category> categories = new HashSet<>();
+        if (bookWithoutId.getCategoryIds() != null) {
+            for (Long categoryId : bookWithoutId.getCategoryIds()) {
+                Category category = categoryRepository.findById(categoryId)
+                        .orElseThrow(() -> new EntityNotFoundException(
+                                "Can't find category with id " + categoryId));
+                categories.add(category);
+            }
+        }
+        book.setCategories(categories);
+        return bookMapper.toDto(bookRepository.save(book));
     }
 
     @Override

@@ -57,9 +57,9 @@ public class BookController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
-    public void updateBook(@PathVariable Long id,
+    public BookDto updateBook(@PathVariable Long id,
                            @RequestBody CreateBookRequestDto bookWithoutIdDto) {
-        bookService.updateById(id, bookWithoutIdDto);
+        return bookService.updateById(id, bookWithoutIdDto);
     }
 
     @GetMapping("/search")
