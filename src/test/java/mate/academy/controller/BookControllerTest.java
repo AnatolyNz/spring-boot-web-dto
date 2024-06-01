@@ -41,6 +41,23 @@ import org.springframework.web.context.WebApplicationContext;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 public class BookControllerTest {
+    public static final String BOOK_1_TITLE = "Book 1";
+    public static final String BOOK_2_TITLE = "Book 2";
+    public static final String BOOK_3_TITLE = "Book 3";
+    public static final String BOOK_4_TITLE = "Updated Title";
+    public static final String AUTHOR_1 = "Author 1";
+    public static final String AUTHOR_2 = "Author 2";
+    public static final String AUTHOR_3 = "Author 3";
+    public static final String AUTHOR_4 = "Updated Author";
+    public static final String ISBN = "ISBN-453734";
+    public static final String ISBN_1 = "ISBN-123456";
+    public static final String ISBN_2 = "ISBN-654321";
+    public static final String ISBN_3 = "ISBN-908765";
+    public static final String ISBN_4 = "ISBN-12345";
+    public static final String UPDATED_DESCRIPION = "Updated description";
+    public static final BigDecimal PRICE_1 = BigDecimal.valueOf(100);
+    public static final BigDecimal PRICE_2 = BigDecimal.valueOf(200);
+    public static final BigDecimal PRICE_3 = BigDecimal.valueOf(250);
     private static final Long VALID_ID = 1L;
     @Autowired
     private static MockMvc mockMvc;
@@ -94,10 +111,10 @@ public class BookControllerTest {
     void createBook_validCreateBookRequestDto_Success() throws Exception {
         //Given
         CreateBookRequestDto requestDto = new CreateBookRequestDto()
-                .setTitle("Book 1")
-                .setPrice(BigDecimal.valueOf(100))
-                .setAuthor("Author 1")
-                .setIsbn("123456");
+                .setTitle(BOOK_1_TITLE)
+                .setPrice(PRICE_1)
+                .setAuthor(AUTHOR_1)
+                .setIsbn(ISBN);
 
         BookDto expected = new BookDto()
                 .setTitle(requestDto.getTitle())
@@ -114,10 +131,9 @@ public class BookControllerTest {
                 )
                 .andExpect(status().isCreated())
                 .andReturn();
-
-        //Then
         BookDto actual = objectMapper.readValue(result.getResponse()
                 .getContentAsString(), BookDto.class);
+        //Then
         assertNotNull(actual);
         assertNotNull(actual.getId());
         assertEquals(expected.getTitle(), actual.getTitle());
@@ -130,12 +146,12 @@ public class BookControllerTest {
     void findAll_GivenBookInCatalog_ShouldReturnAllBooks() throws Exception {
         //Given
         List<BookDto> expected = new ArrayList<>();
-        expected.add(new BookDto().setId(1L).setTitle("Book 1").setAuthor("Author 1")
-                .setIsbn("ISBN-123456").setPrice(BigDecimal.valueOf(100)).setCategoryIds(Set.of()));
-        expected.add(new BookDto().setId(2L).setTitle("Book 2").setAuthor("Author 2")
-                .setIsbn("ISBN-654321").setPrice(BigDecimal.valueOf(200)).setCategoryIds(Set.of()));
-        expected.add(new BookDto().setId(3L).setTitle("Book 3").setAuthor("Author 3")
-                .setIsbn("ISBN-908765").setPrice(BigDecimal.valueOf(250)).setCategoryIds(Set.of()));
+        expected.add(new BookDto().setId(1L).setTitle(BOOK_1_TITLE).setAuthor(AUTHOR_1)
+                .setIsbn(ISBN_1).setPrice(PRICE_1).setCategoryIds(Set.of()));
+        expected.add(new BookDto().setId(2L).setTitle(BOOK_2_TITLE).setAuthor(AUTHOR_2)
+                .setIsbn(ISBN_2).setPrice(PRICE_2).setCategoryIds(Set.of()));
+        expected.add(new BookDto().setId(3L).setTitle(BOOK_3_TITLE).setAuthor(AUTHOR_3)
+                .setIsbn(ISBN_3).setPrice(PRICE_3).setCategoryIds(Set.of()));
 
         //When
         MvcResult result = mockMvc.perform(
@@ -144,10 +160,9 @@ public class BookControllerTest {
         )
                 .andExpect(status().isOk())
                 .andReturn();
-
-        //Then
         BookDto[] actual = objectMapper.readValue(result.getResponse()
                     .getContentAsByteArray(), BookDto[].class);
+        //Then
         assertEquals(3, actual.length);
         assertEquals(expected, Arrays.stream(actual).toList());
     }
@@ -159,9 +174,9 @@ public class BookControllerTest {
         //Given
         BookDto expected = new BookDto()
                 .setId(1L)
-                .setTitle("Book 1")
-                .setAuthor("Author 1")
-                .setIsbn("ISBN-123456")
+                .setTitle(BOOK_1_TITLE)
+                .setAuthor(AUTHOR_1)
+                .setIsbn(ISBN_1)
                 .setPrice(BigDecimal.valueOf(100)).setCategoryIds(Set.of());
 
         //When
@@ -183,11 +198,11 @@ public class BookControllerTest {
     @DisplayName("Update book with valid parameters")
     void updateBook_WithValidIdAndCreateBookRequestDto_Success() throws Exception {
         CreateBookRequestDto updateBookRequestDto = new CreateBookRequestDto()
-                .setTitle("Updated Title")
-                .setAuthor("Updated Author")
-                .setIsbn("12345")
-                .setPrice(BigDecimal.valueOf(250))
-                .setDescription("Updated description");
+                .setTitle(BOOK_4_TITLE)
+                .setAuthor(AUTHOR_4)
+                .setIsbn(ISBN_4)
+                .setPrice(PRICE_3)
+                .setDescription(UPDATED_DESCRIPION);
 
         BookDto expected = new BookDto()
                 .setTitle(updateBookRequestDto.getTitle())
@@ -217,10 +232,10 @@ public class BookControllerTest {
     void deleteBookById_ValidId_Success() throws Exception {
         BookDto expected = new BookDto()
                 .setId(1L)
-                .setTitle("Book 1")
-                .setAuthor("Author 1")
-                .setIsbn("ISBN-123456")
-                .setPrice(BigDecimal.valueOf(100));
+                .setTitle(BOOK_1_TITLE)
+                .setAuthor(AUTHOR_1)
+                .setIsbn(ISBN_1)
+                .setPrice(PRICE_1);
 
         mockMvc.perform(delete("/books/{id}", VALID_ID))
                 .andExpect(status().isNoContent())

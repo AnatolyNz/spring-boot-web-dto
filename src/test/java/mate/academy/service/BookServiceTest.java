@@ -38,14 +38,14 @@ public class BookServiceTest {
     @Mock
     private BookRepository bookRepository;
 
-    @InjectMocks
-    private BookServiceImpl bookService;
-
     @Mock
     private BookSpecificationBuilder bookSpecificationBuilder;
 
     @Mock
     private BookMapper bookMapper;
+
+    @InjectMocks
+    private BookServiceImpl bookService;
 
     @BeforeEach
     public void setUp() {
@@ -55,23 +55,18 @@ public class BookServiceTest {
     @Test
     @DisplayName("Verify save and return for the correct book")
     void saveBook_WithValidBookId_ShouldReturnValidBook() {
-        // Mock data
         CreateBookRequestDto bookRequestDto = new CreateBookRequestDto();
         Book book = new Book();
         Book savedBook = new Book();
         BookDto expectedDto = new BookDto();
 
-        // Mock mapper behavior
         when(bookMapper.toModel(bookRequestDto)).thenReturn(book);
         when(bookMapper.toDto(savedBook)).thenReturn(expectedDto);
 
-        // Mock repository behavior
         when(bookRepository.save(book)).thenReturn(savedBook);
 
-        // Test
         BookDto actualDto = bookService.save(bookRequestDto);
 
-        // Assertions
         assertEquals(expectedDto, actualDto);
     }
 
@@ -81,10 +76,10 @@ public class BookServiceTest {
         Long id = 1L;
         Book book = new Book();
         book.setId(id);
-        when(bookRepository.getBookById(id)).thenReturn(Optional.of(book));
-
         BookDto expected = new BookDto();
         expected.setId(id);
+        when(bookRepository.getBookById(id)).thenReturn(Optional.of(book));
+
         when(bookMapper.toDto(book)).thenReturn(expected);
 
         BookDto actual = bookService.getBookById(id);

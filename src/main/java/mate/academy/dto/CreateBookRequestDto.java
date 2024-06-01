@@ -1,8 +1,8 @@
 package mate.academy.dto;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.util.Set;
 import lombok.Data;
@@ -18,7 +18,7 @@ public class CreateBookRequestDto {
     @NotBlank
     private String isbn;
     @NotNull
-    @Min(0)
+    @Positive
     private BigDecimal price;
     private String description;
     private Set<Long> categoryIds;

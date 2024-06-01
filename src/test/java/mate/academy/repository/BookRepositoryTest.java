@@ -6,10 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import javax.sql.DataSource;
 import mate.academy.model.Book;
+import mate.academy.model.Category;
 import mate.academy.repository.book.BookRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @SpringBootTest
 public class BookRepositoryTest {
@@ -26,6 +31,8 @@ public class BookRepositoryTest {
     private BookRepository bookRepository;
     @Autowired
     private DataSource dataSource;
+    @Autowired
+    private PlatformTransactionManager transactionManager;
 
     @BeforeEach
     void beforeEach() {
@@ -85,9 +92,7 @@ public class BookRepositoryTest {
     }
 
     @Test
-    @DisplayName("""
-       Get book by valid ID
-            """)
+    @DisplayName("Get book by valid ID")
     void getBookById_WithValidId_ShouldReturnOptionalBook() {
         Book expected = new Book();
         expected.setTitle("Book 1");
@@ -98,18 +103,26 @@ public class BookRepositoryTest {
         expected.setDescription("Description for Book 1");
         expected.setCoverImage("image1.jpg");
         expected.setDeleted(false);
-        Optional<Book> actualOptional = bookRepository.getBookById(1L);
 
-        assertTrue(actualOptional.isPresent(), "Book with id 1 should be present");
-        Book actual = actualOptional.get();
-        assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getTitle(), actual.getTitle());
-        assertEquals(expected.getPrice(), actual.getPrice());
-        assertEquals(expected.getAuthor(), actual.getAuthor());
-        assertEquals(expected.getIsbn(), actual.getIsbn());
-        assertEquals(expected.getDescription(), actual.getDescription());
-        assertEquals(expected.getCoverImage(), actual.getCoverImage());
-        assertEquals(expected.isDeleted(), actual.isDeleted());
+        Category category = new Category();
+        category.setId(1L);
+        category.setName("Poetry");
+        category.setDescription("Poems that you will love");
+        category.setDeleted(false);
+
+        Set<Category> categories = new HashSet<>();
+        categories.add(category);
+        expected.setCategories(categories);
+
+        // Begin a transaction before accessing the repository method
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.executeWithoutResult(status -> {
+            Optional<Book> actualOptional = bookRepository.getBookById(1L);
+
+            assertTrue(actualOptional.isPresent(), "Book with id 1 should be present");
+            Book actual = actualOptional.get();
+            assertEquals(expected, actual);
+        });
     }
 
     @Test

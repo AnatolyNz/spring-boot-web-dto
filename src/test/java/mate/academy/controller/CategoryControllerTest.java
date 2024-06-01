@@ -43,11 +43,37 @@ import org.springframework.web.context.WebApplicationContext;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 public class CategoryControllerTest {
+    public static final String AUTHOR_1 = "Author 1";
+    public static final String AUTHOR_2 = "Author 2";
+    public static final String AUTHOR_3 = "Author 3";
+    public static final String BOOK_1_TITLE = "Book 1";
+    public static final String BOOK_2_TITLE = "Book 2";
+    public static final String BOOK_3_TITLE = "Book 3";
+    public static final String UPDATED_NAME = "Updated Name";
+    public static final String ISBN_1 = "ISBN-123456";
+    public static final String ISBN_2 = "ISBN-654321";
+    public static final String ISBN_3 = "ISBN-908765";
+    public static final String ISBN_4 = "ISBN-12345";
+    public static final String NEW_DESCRIPTION = "New description";
+    public static final String DESCRIPTION_1 = "Description for Book 1";
+    public static final String DESCRIPTION_2 = "Description for Book 2";
+    public static final String DESCRIPTION_3 = "Description for Book 3";
+    public static final String UPDATED_DESCRIPTION = "Update description";
+    public static final BigDecimal PRICE_1 = BigDecimal.valueOf(100);
+    public static final BigDecimal PRICE_2 = BigDecimal.valueOf(200);
+    public static final BigDecimal PRICE_3 = BigDecimal.valueOf(250);
+    public static final String COVER_IMAGE_1 = "image1.jpg";
+    public static final String COVER_IMAGE_2 = "image2.jpg";
+    public static final String COVER_IMAGE_3 = "image3.jpg";
+    public static final String NEW_CATEGORY = "New category";
+    public static final String NAME_CATEGORY_1 = "Poetry";
+    public static final String NAME_CATEGORY_2 = "Fiction";
+    public static final String CATEGORY_DESCRIPTION_1 = "Poems that you will love";
+    public static final String CATEGORY_DESCRIPTION_2 = "Nice fiction to read";
     private static final int PAGE_NUMBER = 0;
     private static final int PAGE_SIZE = 10;
     private static final Long VALID_ID = 1L;
     private static final Long INVALID_ID = 1000L;
-
     @Autowired
     private static MockMvc mockMvc;
     @Autowired
@@ -114,8 +140,8 @@ public class CategoryControllerTest {
     @DisplayName("Create a new Category")
     void createCategory_validCreateCategoryRequestDto_Success() throws Exception {
         CategoryDto requestDto = new CategoryDto()
-                .setName("New Category")
-                .setDescription("New description");
+                .setName(NEW_CATEGORY)
+                .setDescription(NEW_DESCRIPTION);
 
         CategoryResponseDto expected = new CategoryResponseDto()
                 .setDescription(requestDto.getDescription())
@@ -147,14 +173,14 @@ public class CategoryControllerTest {
     void getAll_WithPagination_ShouldReturnPageWithCategories() throws Exception {
         List<CategoryResponseDto> expected = new ArrayList<>();
         expected.add(new CategoryResponseDto()
-                .setName("Poetry")
+                .setName(NAME_CATEGORY_1)
                 .setId(1L)
-                .setDescription("Poems that you will love")
+                .setDescription(CATEGORY_DESCRIPTION_1)
         );
         expected.add(new CategoryResponseDto()
-                .setName("Fiction")
+                .setName(NAME_CATEGORY_2)
                 .setId(2L)
-                .setDescription("Nice fiction to read")
+                .setDescription(CATEGORY_DESCRIPTION_2)
         );
 
         Pageable pageable = PageRequest.of(PAGE_NUMBER, PAGE_SIZE);
@@ -182,11 +208,11 @@ public class CategoryControllerTest {
     @DisplayName("Update category with valid parameters")
     void updateCategory_WithValidIdAndRequestDto_Success() throws Exception {
         CategoryDto updateRequestDto = new CategoryDto()
-                .setName("Updated Name")
-                .setDescription("Updated description");
+                .setName(UPDATED_NAME)
+                .setDescription(UPDATED_DESCRIPTION);
         CategoryResponseDto expected = new CategoryResponseDto()
-                .setName("Updated Name")
-                .setDescription("Updated description")
+                .setName(UPDATED_NAME)
+                .setDescription(UPDATED_DESCRIPTION)
                 .setId(VALID_ID);
 
         String jsonRequest = objectMapper.writeValueAsString(updateRequestDto);
@@ -240,31 +266,7 @@ public class CategoryControllerTest {
     @Test
     @DisplayName("Search books by category id")
     void getBooksByCategoryId_validId_success() throws Exception {
-        List<BookDtoWithoutCategoryIds> expected = new ArrayList<>();
-        expected.add(new BookDtoWithoutCategoryIds()
-                .setId(1L)
-                .setTitle("Book 1")
-                .setAuthor("Author 1")
-                .setIsbn("ISBN-123456")
-                .setPrice(BigDecimal.valueOf(100))
-                .setDescription("Description for Book 1")
-                .setCoverImage("image1.jpg"));
-        expected.add(new BookDtoWithoutCategoryIds()
-                .setId(2L)
-                .setTitle("Book 2")
-                .setAuthor("Author 2")
-                .setIsbn("ISBN-654321")
-                .setPrice(BigDecimal.valueOf(200))
-                .setDescription("Description for Book 2")
-                .setCoverImage("image2.jpg"));
-        expected.add(new BookDtoWithoutCategoryIds()
-                .setId(3L)
-                .setTitle("Book 3")
-                .setAuthor("Author 3")
-                .setIsbn("ISBN-908765")
-                .setPrice(BigDecimal.valueOf(250))
-                .setDescription("Description for Book 3")
-                .setCoverImage("image3.jpg"));
+        List<BookDtoWithoutCategoryIds> expected = createExpectedBooks();
 
         MvcResult mvcResult = mockMvc.perform(get("/categories/{id}/books", VALID_ID)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -272,10 +274,34 @@ public class CategoryControllerTest {
                 .andReturn();
         String jsonResponse = mvcResult.getResponse().getContentAsString();
         List<BookDtoWithoutCategoryIds> actual = objectMapper
-                .readValue(
-                        jsonResponse, new TypeReference<>() {}
-                );
+                .readValue(jsonResponse, new TypeReference<>() {});
         assertNotNull(actual);
         assertEquals(expected, actual);
+    }
+
+    private List<BookDtoWithoutCategoryIds> createExpectedBooks() {
+        return List.of(
+                createBook(VALID_ID, BOOK_1_TITLE,
+                        AUTHOR_1, ISBN_1, PRICE_1,
+                        DESCRIPTION_1, COVER_IMAGE_1),
+                createBook(2L, BOOK_2_TITLE, AUTHOR_2, ISBN_2,
+                        PRICE_2, DESCRIPTION_2, COVER_IMAGE_2),
+                createBook(3L, BOOK_3_TITLE, AUTHOR_3, ISBN_3,
+                        PRICE_3, DESCRIPTION_3, COVER_IMAGE_3)
+        );
+    }
+
+    private BookDtoWithoutCategoryIds createBook(Long id, String title,
+                                                 String author, String isbn,
+                                                 BigDecimal price, String description,
+                                                 String coverImage) {
+        return new BookDtoWithoutCategoryIds()
+                .setId(id)
+                .setTitle(title)
+                .setAuthor(author)
+                .setIsbn(isbn)
+                .setPrice(price)
+                .setDescription(description)
+                .setCoverImage(coverImage);
     }
 }
