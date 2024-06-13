@@ -84,7 +84,7 @@ Example of request body to **create new book**:
 {
   "title": "Book title",
   "author": "Book author",
-  "price": "200", 
+  "price": 200, 
   "description": "Description for book",
   "coverImage": "Book image",
   "isbn": "ISBN-123456",
@@ -195,6 +195,8 @@ The project follows a modular structure:
 * **dto**: Data Transfer Objects for communication between the client and server.
 * **mapper**: Mapper interfaces for mapping between DTOs and entity models.
 
+Link to a video demonstration of the project - https://drive.google.com/drive/folders/1WkUiHSLxAJwgzelOM4aemBnLmSeOIdyP?usp=sharing
+
 ## Setup
 
 To set up and use the Online Book Store, follow these steps:
@@ -220,6 +222,197 @@ To set up and use the Online Book Store, follow these steps:
 
 ## Postman
 For detailed API usage, you can use provided requests samples.
+Examples answers for difference request body:
+
+``` 
+POST: /api/auth/register
+``` 
+Example of request body to **register**:
+
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "securePassword123",
+  "repeatPassword": "securePassword123",
+  "firstName": "John",
+  "lastName": "Doe",
+  "shippingAddress": "123 Main St, City, Country"
+}
+```
+``` 
+Answer from request body to **register**:
+{
+  "id": 1,
+  "password": "securePassword123",
+  "repeatPassword": "securePassword123",
+  "firstName": "John",
+  "lastName": "Doe",
+  "shippingAddress": "123 Main St, City, Country"
+}
+```
+```
+POST: /api/auth/login
+```
+Example of request body to **log-in**:
+
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "securePassword123"
+}
+```
+```json
+Answer from request body to **log-in**:
+{
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTcxNzYwMDI4MywiZXhwIjoxNzE3NjAwNTgzfQ.0V8B9GNRiZiFnaxdetrAv9RpIgvxl99q6IqSyqE2lBQ"
+}
+```
+```
+POST: /api/books/
+```
+Example of request body to **create new book**:
+```json
+{
+  "title": "Book title",
+  "author": "Book author",
+  "price": 200, 
+  "description": "Description for book",
+  "coverImage": "Book image",
+  "isbn": "ISBN-123456",
+  "categoryIds": [1, 2]
+}
+```
+```json
+Answer from request body to **create new book**:
+{
+  "id": 1,
+  "title": "Book title",
+  "author": "Book author",
+  "price": 200, 
+  "description": "Description for book",
+  "coverImage": "Book image",
+  "isbn": "ISBN-123456",
+  "categoryIds": [1, 2]
+}
+```
+```
+DELETE: /api/books/{id}
+Example of request body to **delete book with id**:
+```
+```json
+{
+  "id": 1,
+  "title": "Book title",
+  "author": "Book author",
+  "price": 200, 
+  "description": "Description for book",
+  "coverImage": "Book image",
+  "isbn": "ISBN-123456",
+  "categoryIds": [1, 2]
+}
+```
+```
+Answer from request body to **delete book with id**:
+Status 204 No Content
+
+PUT: /api/books/{id}
+Example of request body to **modernization book with id**:
+```
+```json
+{
+  "id": 1,
+  "title": "Book title",
+  "author": "Book author",
+  "price": 350, 
+  "description": "Description for book",
+  "coverImage": "Book image",
+  "isbn": "ISBN-123456",
+  "categoryIds": [1, 2]
+}
+```
+```
+Answer from request body to **put book with id**:
+Status 200 Ok
+
+GET: /api/books
+Answer from request body **get all books**:
+```
+```json
+[
+    {
+        "id": 2,
+        "title": "Some Secrets Should Never Be Kept: Protect children from unsafe touch by teaching them to always speak up",
+        "author": "Jayneen L Sanders",
+        "isbn": "0987186019",
+        "price": 45,
+        "description": "The beautifully illustrated children's picture book that sensitively broaches the subject of keeping children safe from inappropriate touch"
+    },
+    {
+        "id": 3,
+        "title": "It's Not You: Identifying and Healing from Narcissistic People",
+        "author": "Ramani Durvasula",
+        "isbn": "0593492625",
+        "price": 39,
+        "description": "A compassionate road map and survival guide for people in narcissistic relationships.."
+    },
+    {
+        "id": 4,
+        "title": "Motivational Interviewing, Third Edition: Helping People Change",
+        "author": "Stephen Rollnick",
+        "isbn": "31609182278",
+        "price": 105,
+        "description": "Interviewing."
+    },
+    {
+        "id": 5,
+        "title": "Updated Title",
+        "author": "Updated Author",
+        "isbn": "978-1234567890",
+        "price": 35,
+        "description": "Updated description"
+    },
+    {
+        "id": 9,
+        "title": "Book title",
+        "author": "Book author",
+        "isbn": "ISBN-123456",
+        "price": 350,
+        "description": "Description for book"
+    }
+]
+```
+```
+GET: /api/books/{id}
+Answer from request body **get book with id = 2**:
+```
+```json
+{
+    "id": 2,
+    "title": "Some Secrets Should Never Be Kept: Protect children from unsafe touch by teaching them to always speak up",
+    "author": "Jayneen L Sanders",
+    "isbn": "0987186019",
+    "price": 45,
+    "description": "The beautifully illustrated children's picture book that sensitively broaches the subject of keeping children safe from inappropriate touch"
+}
+```
+```
+GET: /api/books/search?authors=Jayneen L Sanders
+Answer from request body **get book with author = Jayneen L Sanders**:
+```
+```json
+[
+    {
+        "id": 2,
+        "title": "Some Secrets Should Never Be Kept: Protect children from unsafe touch by teaching them to always speak up",
+        "author": "Jayneen L Sanders",
+        "isbn": "0987186019",
+        "price": 45,
+        "description": "The beautifully illustrated children's picture book that sensitively broaches the subject of keeping children safe from inappropriate touch"
+    }
+]
+```
+```
+
 
 ## Conclusion
 The book-shop is designed to offer a seamless experience for managing bookstore operations.
